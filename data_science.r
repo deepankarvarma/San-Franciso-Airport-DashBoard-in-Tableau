@@ -1,0 +1,48 @@
+#Cleaning the dataset
+#Uploading the dataset
+library(readxl)
+atd1 <- read_excel("C:/Users/acer/Desktop/Thapar/Subjects/5th Semester/UCS538 Data Science Fundamentals/Lab/DashBoard in Tableau/atd1.xlsx")
+atd2 <- read_excel("C:/Users/acer/Desktop/Thapar/Subjects/5th Semester/UCS538 Data Science Fundamentals/Lab/DashBoard in Tableau/atd2.xlsx")
+a1=atd1
+a2=atd2
+head(a1)
+head(a2)
+#different types of join
+#outer join
+outerjoined = merge(x=a1, y=a2, by='SNo', all = TRUE)
+
+#inner join
+innerjoined = merge(x=a1, y=a2, by='SNo')
+
+#left join
+leftjoined = merge(x=a1, y=a2, by='SNo', all.x = TRUE)
+
+#right join
+rightjoined = merge(x=a1, y=a2, by='SNo', all.y = TRUE)
+
+#using innerjoined table for further calculations
+data = innerjoined
+head(data)
+
+#we observe that the field "Properties Edtf Inception" is of no use so we need to drop it
+
+data = subset(data, select = -c(`Properties Edtf Inception`) )
+head(data)
+
+mean(data$`Properties Flysfo Base Flight Number`)
+#returns NA. That is needs to be cleaned
+cleanatd<-mean(data$`Properties Flysfo Base Flight Number`,na.rm = TRUE)
+cleanatd
+#Cleaning using complete.cases() function
+data<-data[complete.cases(data), ]
+head(data)
+summary(data)
+#number of rows in out dataset after cleaning
+nrow(data)
+
+mean(data$`Properties Flysfo Base Flight Number`)
+max((data$`Geometry Coordinates 0 0`-data$`Geometry Coordinates 1 0`)+(data$`Geometry Coordinates 0 1`-data$`Geometry Coordinates 1 1`))
+#exporting the excel file
+install.packages("openxlsx")
+library(openxlsx)
+write.xlsx(data, 'cleanatd.xlsx')
